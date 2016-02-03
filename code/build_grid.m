@@ -80,21 +80,27 @@ Grid.dof = 1:Grid.N;              % cell centered degree of freedom/gridblock nu
 Grid.dof_f = 1:Grid.Nf;            % face degree of freedom/face number
 
 %% Boundary dof's
-% Cells
-Grid.dof_xmin = [1:Grid.Ny]';
-Grid.dof_xmax = [1+(Grid.Nx-1)*Grid.Ny:Grid.N]';
-Grid.dof_ymax = [Grid.Ny:Grid.Ny:Grid.N]';
-Grid.dof_ymin = Grid.dof_ymax - (Grid.Ny-1);
+% Boundary cells
+% make more efficient by avoidng DOF
+DOF = reshape(Grid.dof,Grid.Ny,Grid.Nx);
+Grid.dof_xmin = DOF(:,1);
+Grid.dof_xmax = DOF(:,Grid.Nx);
+Grid.dof_ymin = DOF(1,:)';
+Grid.dof_ymax = DOF(Grid.Ny,:)';
 
 % Boundary faces
+% DOFx = reshape([1:Grid.Nfx],Grid.Ny,Grid.Nx+1);
+% Grid.dof_f_xmin = DOFx(:,1);
+% Grid.dof_f_xmax = DOFx(:,Grid.Nx+1);
 Grid.dof_f_xmin = Grid.dof_xmin;
 Grid.dof_f_xmax = [Grid.Nfx-Grid.Ny+1:Grid.Nfx]';
 
 
 % note: y-fluxes are shifted by Nfx
 % make more efficient by avoidng DOFy
-Grid.dof_f_ymin = Grid.Nfx+[1:Grid.Ny+1:1+(Grid.Nx-1)*(Grid.Ny+1)]';
-Grid.dof_f_ymax = Grid.dof_f_ymin+Grid.Ny;
+DOFy = reshape(Grid.Nfx+[1:Grid.Nfy],Grid.Ny+1,Grid.Nx);
+Grid.dof_f_ymin = DOFy(1,:)';
+Grid.dof_f_ymax = DOFy(Grid.Ny+1,:)';
 
 % In prep. for unstructured grid, store all cell volumes and face areas
 % Volumes are stored and indexed like unknowns
@@ -111,7 +117,7 @@ switch Grid.geom
         Grid.V  = pi*Grid.dz*(Grid.xf(2:Grid.Nx+1).^2-Grid.xf(1:Grid.Nx).^2);
     case 'spherical1D'
         Grid.A = 4*pi*Grid.xf.^2;
-        Grid.V  = 4/3*pi*(Grid.xf(2:Grid.Nx+1).^3-Grid.xf(1:Grid.Nx).^3);
+        Grid.V  = 4*pi*Grid.xc.^2*Grid.dx;%4/3*pi*(Grid.xf(2:Grid.Nx+1).^3-Grid.xf(1:Grid.Nx).^3);
     case 'cylindrical_rz'
         % assumes: y-dir is radial direction and x-dir is cylinder-axis
         Grid.A = [repmat(pi*(Grid.yf(2:Grid.Ny+1).^2-Grid.yf(1:Grid.Ny).^2),Grid.Nx+1,1);... % Ax-faces 

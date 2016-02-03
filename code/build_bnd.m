@@ -29,6 +29,12 @@ function [B,N,fn] = build_bnd(Param,Grid)
 % >> Param.qb = 1;                   % set bnd flux
 % >> [B,N,fn] = build_bnd(Param,Grid);
 
+%% Check input format
+if isrow(Param.dof_dir)   && length(Param.dof_dir)>1;   error('Param.dof_dir is not a column vector'); end
+if isrow(Param.dof_neu)   && length(Param.dof_neu)>1;   error('Param.dof_neu is not a column vector'); end
+if isrow(Param.dof_f_dir) && length(Param.dof_f_dir)>1; error('Param.dof_f_dir is a not column vector'); end
+if isrow(Param.dof_f_neu) && length(Param.dof_f_neu)>1; error('Param.dof_f_neu is a not column vector'); end
+if isfield(Param,'qb') && isrow(Param.qb) && length(Param.qb)>1;        error('Param.qb is not a column vector'); end
 
 %% Dirichlet boundary conditions
 if isempty(Param.dof_dir)
