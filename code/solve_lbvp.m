@@ -37,7 +37,6 @@ function [u] = solve_lbvp(L,f,B,g,N)
 if isempty(B) % no constraints
     u = L\f;
 else
-    %u0 = zeros(length(f)); 
     up = spalloc(length(f),1,length(g));
     up = B'*(B*B'\g);
     u0 = N*(N'*L*N\(N'*(f-L*up)));
