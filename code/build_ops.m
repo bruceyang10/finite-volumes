@@ -64,8 +64,7 @@ I = speye(Grid.N);
 
 
 %% Adjust divergence for different coordinate systems
-if strcmp(Grid.geom,'polar1D')
-%     Rf = comp_mean(Grid.xc,-1, Grid);
+if strcmp(Grid.geom,'cylindrical_r')
     Rf = spdiags(Grid.xf,0,Nx+1,Nx+1);
     Rcinv = spdiags(1./Grid.xc,0,Nx,Nx);
     D = Rcinv*D*Rf;
