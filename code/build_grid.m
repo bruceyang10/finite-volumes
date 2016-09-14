@@ -112,7 +112,7 @@ switch Grid.geom
                   ones(Grid.Nfy,1)*Grid.dx*Grid.dz;
                   Grid.dx*Grid.dy];
         Grid.V  = ones(Grid.N,1)*Grid.dx*Grid.dy*Grid.dz;
-    case 'polar1D'
+    case 'cylindrical_r'
         Grid.A = 2*pi*Grid.xf*Grid.dz;
         Grid.V  = pi*Grid.dz*(Grid.xf(2:Grid.Nx+1).^2-Grid.xf(1:Grid.Nx).^2);
     case 'spherical1D'
