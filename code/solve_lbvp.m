@@ -27,12 +27,17 @@ function [u] = solve_lbvp(L,f,B,g,N)
 % Example call:
 % >> Grid.xmin = 0; Grid.xmax = 1; Grid.Nx = 10;
 % >> Grid = build_grid(Grid);
-% >> [D,G,I] = build_ops(Grid);
-% >> L = -D*G; fs = ones(Grid.Nx,1);
-% >> dof_dir = 1;
-% >> B = I(dof_dir,:); g = 1; 
-% >> N = I; N(:,dof_dir) = [];
-% >> h = solve_lbvp(L,fs,B,g,N);
+% >> [D,G,I]=build_ops(Grid);
+% >> Param.dof_dir   = Grid.dof_xmin;     % identify cells on Dirichlet bnd
+% >> Param.dof_f_dir = Grid.dof_f_xmin;   % identify faces on Dirichlet bnd
+% >> Param.dof_neu   = Grid.dof_xmax;     % identify cells on Neumann bnd
+% >> Param.dof_f_neu = Grid.dof_f_xmax;   % identify cells on Neumann bnd
+% >> Param.qb = 1;                        % set bnd flux
+% >> Param.g  = 0;                        % set bnd head
+% >> [B,N,fn] = build_bnd(Param,Grid,I);  % Build constraint matrix and basis for its nullspace
+% >> L = -D*G;                            % Laplacian operator
+% >> fs = spalloc(Grid.N,1,0);            % r.h.s. (zero)
+% >> h = solve_lbvp(L,fs+fn,B,Param.g,N); % Solve linear boundary value problem
 
 if isempty(B) % no constraints
     u = L\f;
