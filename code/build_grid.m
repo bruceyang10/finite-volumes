@@ -76,8 +76,8 @@ Grid.zf = [Grid.zmin:Grid.dz:Grid.zmax]'; % z-coords of gridblock faces
 
 %% Set up dof vectors
 Grid.N = Grid.Nx*Grid.Ny*Grid.Nz; % total number of gridblocks
-Grid.dof = 1:Grid.N;              % cell centered degree of freedom/gridblock number
-Grid.dof_f = 1:Grid.Nf;            % face degree of freedom/face number
+Grid.dof   = [1:Grid.N]';         % cell centered degree of freedom/gridblock number
+Grid.dof_f = [1:Grid.Nf]';        % face degree of freedom/face number
 
 %% Boundary dof's
 % Boundary cells
