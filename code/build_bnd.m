@@ -1,9 +1,17 @@
-function [B,N,fn] = build_bnd(Param,Grid)
+function [B,N,fn] = build_bnd(Param,Grid,I)
 % author: Marc Hesse
 % date: 06/09/2015
 % Description:
 % This function computes the operators and r.h.s vectors for both Dirichlet
-% and Neumann boundary conditions.
+% and Neumann boundary conditions. 
+% Note:
+% N is not created from I the same way B is created from I, because 
+% the vector dof_dir contains the columns that must be eliminated rather
+% then the colums that are retained in N. If you wanted to do it this way
+% you would have to create a new vector
+% dof_non_dir = setdiff(dof,dof_dir)
+% I suspect that the set-operators are expensive on large vectors, hence
+% we simply eliminate the rows.
 %
 % Input:
 % Grid = structure containing all pertinent information about the grid.
@@ -14,6 +22,7 @@ function [B,N,fn] = build_bnd(Param,Grid)
 %         Param.dof_neu = N by 1 column vector containing 
 %                         the dof's of the Neumann boundary.
 %         Param.qb      = column vector of prescribed fluxes on Neuman bnd.
+% I = identity matrix in the full space
 %
 % Output:
 % B = Nc by N matrix of the Dirichlet constraints
@@ -24,10 +33,12 @@ function [B,N,fn] = build_bnd(Param,Grid)
 % >> Grid.xmin = 0; Grid.xmax = 1; Grid.Nx = 10;
 % >> Grid = build_grid(Grid);
 % >> [D,G,I]=build_ops(Grid);
-% >> Param.dof_dir = Grid.dof_xmin;  % identify Dirichlet bnd
-% >> Param.dof_neu = Grid.dof_xmax;  % identify Neumann bnd
+% >> Param.dof_dir   = Grid.dof_xmin;    % identify cells on Dirichlet bnd
+% >> Param.dof_f_dir = Grid.dof_f_xmin;  % identify faces on Dirichlet bnd
+% >> Param.dof_neu   = Grid.dof_xmax;    % identify cells on Neumann bnd
+% >> Param.dof_f_neu = Grid.dof_f_xmax;  % identify cells on Neumann bnd
 % >> Param.qb = 1;                   % set bnd flux
-% >> [B,N,fn] = build_bnd(Param,Grid);
+% >> [B,N,fn] = build_bnd(Param,Grid,I);
 
 %% Check input format
 if isrow(Param.dof_dir)   && length(Param.dof_dir)>1;   error('Param.dof_dir is not a column vector'); end
@@ -41,9 +52,8 @@ if isempty(Param.dof_dir)
     B = [];
     N = [];
 else
-    N = speye(Grid.N); % use N as temp storage for identity
-    B = N(Param.dof_dir,:);
-    N(:,Param.dof_dir) = [];
+    B = I(Param.dof_dir,:);
+    N = I; N(:,Param.dof_dir) = [];
 end
 
 %% Neumann boundary conditions
