@@ -40,7 +40,7 @@ elseif (Nx>1) && (Ny>1) % 2D
     qyp = max(reshape(QY(2:Grid.Ny+1,:),Grid.N,1),0);
     row_p = (Grid.Ny+1)*repmat([0:Grid.Nx-1],Grid.Ny,1)+repmat([2:Grid.Ny+1]',1,Grid.Nx); 
     row_n = (Grid.Ny+1)*repmat([0:Grid.Nx-1],Grid.Ny,1)+repmat([1:Grid.Ny]',  1,Grid.Nx); 
-    Ay = sparse([row_p(:);row_n(:)],[Grid.dof';Grid.dof'],[qyp;qyn]);
+    Ay = sparse([row_p(:);row_n(:)],[Grid.dof;Grid.dof],[qyp;qyn]);
     
     A = [Ax; Ay];
 end
